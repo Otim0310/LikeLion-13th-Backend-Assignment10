@@ -1,6 +1,6 @@
 package com.likelion.jpademo.controller;
 
-import com.likelion.jpademo.dto.PostDto;
+import com.likelion.jpademo.dto.PostResponse;
 import com.likelion.jpademo.dto.PostRequests;
 import com.likelion.jpademo.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -17,18 +17,18 @@ public class PostController {
     private final PostService service;
 
     @PostMapping
-    public ResponseEntity<PostDto> create(@RequestBody PostRequests.Create body) {
+    public ResponseEntity<PostResponse> create(@RequestBody PostRequests.Create body) {
         var res = service.create(body.memberId(), body.title(), body.content());
         return ResponseEntity.created(URI.create("/posts/" + res.id())).body(res);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PostDto> get(@PathVariable Long id) {
+    public ResponseEntity<PostResponse> get(@PathVariable Long id) {
         return ResponseEntity.ok(service.get(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PostDto> update(@PathVariable Long id, @RequestBody PostRequests.Update body) {
+    public ResponseEntity<PostResponse> update(@PathVariable Long id, @RequestBody PostRequests.Update body) {
         return ResponseEntity.ok(service.update(id, body.title(), body.content()));
     }
 

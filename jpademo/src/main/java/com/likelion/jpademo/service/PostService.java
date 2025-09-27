@@ -1,10 +1,9 @@
 package com.likelion.jpademo.service;
 
-import com.likelion.jpademo.dto.PostDto;
+import com.likelion.jpademo.dto.PostResponse;
 import com.likelion.jpademo.entity.Member;
 import com.likelion.jpademo.entity.Post;
 import com.likelion.jpademo.exception.NotFoundException;
-import com.likelion.jpademo.repository.MemberRepository;
 import com.likelion.jpademo.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,39 +14,41 @@ import org.springframework.transaction.annotation.Transactional;
 public class PostService {
 
     private final PostRepository postRepo;
-    private final MemberRepository memberRepo;
+    private final MemberService memberService;
 
     @Transactional
-    public PostDto create(Long memberId, String title, String content) {
-        Member m = memberRepo.findById(memberId)
-                .orElseThrow(() -> new NotFoundException("Member not found: " + memberId));
-        Post p = Post.builder().title(title).content(content).member(m).build();
-        Post saved = postRepo.save(p);
-        return new PostDto(saved.getId(), saved.getTitle(), saved.getContent(), m.getId());
+    public PostResponse create(Long memberId, String title, String content) {
+        Member member = memberService.findById(memberId);
+        Post post = Post.builder()
+                .title(title)
+                .content(content)
+                .member(member)
+                .build();
+        Post saved = postRepo.save(post);
+        return PostResponse.fromEntity(saved);
     }
 
     @Transactional(readOnly = true)
-    public PostDto get(Long id) {
-        Post p = postRepo.findById(id)
+    public PostResponse get(Long id) {
+        Post post = postRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post not found: " + id));
-        Long memberId = (p.getMember() != null) ? p.getMember().getId() : null;
-        return new PostDto(p.getId(), p.getTitle(), p.getContent(), memberId);
+        return PostResponse.fromEntity(post);
     }
 
     @Transactional
-    public PostDto update(Long id, String title, String content) {
-        Post p = postRepo.findById(id)
+    public PostResponse update(Long id, String title, String content) {
+        Post post = postRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post not found: " + id));
-        p.setTitle(title);
-        p.setContent(content);
-        return new PostDto(p.getId(), p.getTitle(), p.getContent(),
-                p.getMember() != null ? p.getMember().getId() : null);
+        post.setTitle(title);
+        post.setContent(content);
+        return PostResponse.fromEntity(post);
     }
 
     @Transactional
     public void delete(Long id) {
-        if (!postRepo.existsById(id)) throw new NotFoundException("Post not found: " + id);
+        if (!postRepo.existsById(id)) {
+            throw new NotFoundException("Post not found: " + id);
+        }
         postRepo.deleteById(id);
     }
 }
-
