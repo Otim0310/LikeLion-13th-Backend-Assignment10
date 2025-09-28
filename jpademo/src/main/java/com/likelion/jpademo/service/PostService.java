@@ -39,8 +39,8 @@ public class PostService {
     public PostResponse update(Long id, String title, String content) {
         Post post = postRepo.findById(id)
                 .orElseThrow(() -> new NotFoundException("Post not found: " + id));
-        post.setTitle(title);
-        post.setContent(content);
+        post.updateTitle(title);
+        post.updateContent(content);
         return PostResponse.fromEntity(post);
     }
 

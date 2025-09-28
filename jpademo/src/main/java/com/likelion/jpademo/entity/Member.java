@@ -14,7 +14,6 @@ public class Member {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     private String nickname;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -29,5 +28,9 @@ public class Member {
     public void addPost(Post p) {
         posts.add(p);
         p.setMember(this);
+    }
+
+    public void changeNickname(String newNickname) {
+        this.nickname = newNickname; //사용자의 닉네임 수정은 포스트 수정을 넣으면서 같이 넣어봤습니다.
     }
 }

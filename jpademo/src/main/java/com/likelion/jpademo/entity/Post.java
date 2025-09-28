@@ -11,10 +11,8 @@ public class Post {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     private String title;
 
-    @Setter
     @Lob
     private String content;
 
@@ -31,5 +29,13 @@ public class Post {
 
     public void setMember(Member member) {
         this.member = member;
+    } //이 부분도 삭제했더니 오류가 나서 찾아보니 member와의 연관관계를 위해서 필요하다고 해서 그냥 뒀는데 이게 남아있어도 오류를 야기할 수 있나요?
+
+    public void updateTitle(String newTitle) {
+        this.title = newTitle;
+    }//이걸 생각을 못하고 @Builder만 했더니 테스트로 수정을 해봤을 때 먹히지 않아서 새로 추가했습니다
+
+    public void updateContent(String newContent) {
+        this.content = newContent;
     }
 }
