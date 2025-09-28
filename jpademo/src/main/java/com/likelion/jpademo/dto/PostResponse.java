@@ -12,4 +12,8 @@ public record PostResponse(Long id, String title, String content, Long memberId)
                 post.getMember() != null ? post.getMember().getId() : null
         );
     }
+
+    public static PostResponse from(Post post) {
+        return fromEntity(post);
+    }
 }
